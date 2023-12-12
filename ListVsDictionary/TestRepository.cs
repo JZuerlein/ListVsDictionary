@@ -68,5 +68,27 @@ namespace ListVsDictionary
 
             return _customers;
         }
+
+        public IEnumerable<Customer> GetCustomersWithDictionary()
+        {
+            foreach (var orderItem in _orderItems)
+            {
+                orderItem.Product = _products.First(_ => _.ProductId == orderItem.ProductId);
+            }
+
+            var orderItems = _orderItems.GroupBy(_ => _.OrderId).ToDictionary(_ => _.Key, _ => _.ToList();
+            var orders = _orders.GroupBy(_ => _.CustomerId).ToDictionary(_ => _.Key, _ => _.ToList());
+
+            foreach (var customer in _customers)
+            {
+                customer.Orders = orders[customer.CustomerId];
+                foreach (var order in orders[customer.CustomerId])
+                {
+                    order.OrderItems = orderItems[order.OrderId];
+                }
+            }
+
+            return _customers;
+        }
     }
 }
