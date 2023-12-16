@@ -26,9 +26,9 @@ namespace ListVsDictionary
                 _customers.Add(new Customer() { CustomerId = i, Name = i.ToString() });
             }
 
-            for (int i = 1; i <= numOrdersPerCustomer; i++)
+            for (int i = 1; i <= numCustomers; i++)
             {
-                for (int j = 1; i <= numOrdersPerCustomer; j++)
+                for (int j = 1; j <= numOrdersPerCustomer; j++)
                 {
                     _orders.Add(new Order() { OrderId = i * j, CustomerId = i, OrderNumber = (i * j).ToString() });
                 }
@@ -36,13 +36,13 @@ namespace ListVsDictionary
 
             var random = new Random();
 
-            for(int i = 1; i <= numOrdersPerCustomer; i++)
+            for(int i = 1; i <= numCustomers; i++)
             {
-                for(int j = 1; i <= numOrdersPerCustomer; j++)
+                for(int j = 1; j <= numOrdersPerCustomer; j++)
                 {
                     for(int z = 1; z <= numOrderItemsPerOrder; z++)
                     {
-                        _orderItems.Add(new OrderItem() { OrderItemId = i * j * z, OrderId = i * j, PriceCharged = i * j * z, Qty = 1, ProductId = random.Next(numProducts) });
+                        _orderItems.Add(new OrderItem() { OrderItemId = i * j * z, OrderId = i * j, PriceCharged = i * j * z, Qty = 1, ProductId = random.Next(1, numProducts) });
                     }
                 }
             }
@@ -76,7 +76,7 @@ namespace ListVsDictionary
                 orderItem.Product = _products.First(_ => _.ProductId == orderItem.ProductId);
             }
 
-            var orderItems = _orderItems.GroupBy(_ => _.OrderId).ToDictionary(_ => _.Key, _ => _.ToList();
+            var orderItems = _orderItems.GroupBy(_ => _.OrderId).ToDictionary(_ => _.Key, _ => _.ToList());
             var orders = _orders.GroupBy(_ => _.CustomerId).ToDictionary(_ => _.Key, _ => _.ToList());
 
             foreach (var customer in _customers)
