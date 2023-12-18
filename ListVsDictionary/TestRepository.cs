@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,6 +65,57 @@ namespace ListVsDictionary
             foreach (var customer in _customers)
             {
                 customer.Orders = _orders.Where(_ => _.CustomerId ==  customer.CustomerId).ToList();
+            }
+
+            return _customers;
+        }
+
+        public IEnumerable<Customer> GetCustomersWithSpan()
+        {
+            var products = CollectionsMarshal.AsSpan<Product>(_products);
+            var orderItems = CollectionsMarshal.AsSpan<OrderItem>(_orderItems);
+            var orders = CollectionsMarshal.AsSpan<Order>(_orders);
+            var customers = CollectionsMarshal.AsSpan<Customer>(_customers);
+
+            foreach (var orderItem in orderItems)
+            {
+                foreach(var product in products)
+                {
+                    if (product.ProductId == orderItem.ProductId)
+                    {
+                        orderItem.Product = product;
+                        break;
+                    }
+                    orderItem.Product = null;    
+                }
+            }
+
+            foreach (var order in orders)
+            {
+                var items = new List<OrderItem>();
+                foreach (var orderItem in orderItems)
+                {
+                    if (orderItem.OrderId == order.OrderId)
+                    {
+                        items.Add(orderItem);
+                        break;
+                    }
+                }
+                order.OrderItems = items;
+            }
+
+            foreach (var customer in customers)
+            {
+                var customerOrders = new List<Order>();
+                foreach (var order in orders)
+                {
+                    if (order.CustomerId == customer.CustomerId)
+                    {
+                        customerOrders.Add(order);
+                        break;
+                    }
+                }
+                customer.Orders = customerOrders;
             }
 
             return _customers;
