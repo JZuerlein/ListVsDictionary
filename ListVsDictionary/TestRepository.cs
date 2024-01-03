@@ -31,7 +31,9 @@ namespace ListVsDictionary
             {
                 for (int j = 1; j <= numOrdersPerCustomer; j++)
                 {
-                    _orders.Add(new Order() { OrderId = i * j, CustomerId = i, OrderNumber = (i * j).ToString() });
+                    _orders.Add(new Order() { OrderId = (i-1)*numOrdersPerCustomer + j, 
+                                              CustomerId = i, 
+                                              OrderNumber = ((i - 1) * numOrdersPerCustomer + j).ToString() });
                 }
             }
 
@@ -43,7 +45,12 @@ namespace ListVsDictionary
                 {
                     for(int z = 1; z <= numOrderItemsPerOrder; z++)
                     {
-                        _orderItems.Add(new OrderItem() { OrderItemId = i * j * z, OrderId = i * j, PriceCharged = i * j * z, Qty = 1, ProductId = random.Next(1, numProducts) });
+                        var orderId = ((i - 1) * numOrdersPerCustomer + j);
+                        var orderItemId = ((i - 1) * numOrdersPerCustomer * numOrderItemsPerOrder) + 
+                                          ((j - 1) * numOrderItemsPerOrder) +
+                                          z;
+
+                        _orderItems.Add(new OrderItem() { OrderItemId = orderItemId, OrderId = orderId, PriceCharged = i * j * z, Qty = 1, ProductId = random.Next(1, numProducts) });
                     }
                 }
             }
