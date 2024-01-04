@@ -77,6 +77,47 @@ namespace ListVsDictionary
             return _customers;
         }
 
+        public IEnumerable<Customer> GetCustomerWithSortedSpan()
+        {
+            var products = CollectionsMarshal.AsSpan<Product>(_products);
+            products.Sort();
+
+            var sortOrderItemsByOrderId = new SortOrderItemsByOrderId();
+            var sortOrdersByCustomerId = new SortOrdersByCustomerId();
+
+            var orderItems = CollectionsMarshal.AsSpan<OrderItem>(_orderItems);
+            orderItems.Sort(sortOrderItemsByOrderId);
+
+            var orders = CollectionsMarshal.AsSpan<Order>(_orders);
+            orders.Sort();
+
+            var customers = CollectionsMarshal.AsSpan<Customer>(_customers);
+            int j = 0;
+            for(var i = 0; i < orders.Length; i++)
+            {
+                while(j < orderItems.Length && orderItems[j].OrderId == orders[i].OrderId)
+                {
+                    orders[i].OrderItems.Add(orderItems[j]);
+                    j++;
+                }
+            }
+
+            orders.Sort(sortOrdersByCustomerId);
+            customers.Sort();
+
+            j = 0;
+            for (var i = 0; i < customers.Length; i++)
+            { 
+                while(j < orders.Length && orders[j].CustomerId == customers[i].CustomerId)
+                {
+                    customers[i].Orders.Add(orders[j]);
+                    j++;
+                }
+            }
+
+            return customers.ToArray();
+        }
+
         public IEnumerable<Customer> GetCustomersWithSpan()
         {
             var products = CollectionsMarshal.AsSpan<Product>(_products);
@@ -125,7 +166,7 @@ namespace ListVsDictionary
                 customer.Orders = customerOrders;
             }
 
-            return _customers;
+            return customers.ToArray();
         }
 
         public IEnumerable<Customer> GetCustomersWithDictionary()

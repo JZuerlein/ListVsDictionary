@@ -5,7 +5,7 @@ using BenchmarkDotNet.Running;
 
 var repo = new TestRepository(3, 3, 3, 27);
 
-var customers = repo.GetCustomers();
+var customers = repo.GetCustomerWithSortedSpan();
 
 foreach (var customer in customers)
 {
