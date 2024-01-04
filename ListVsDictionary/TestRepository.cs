@@ -92,6 +92,7 @@ namespace ListVsDictionary
             orders.Sort();
 
             var customers = CollectionsMarshal.AsSpan<Customer>(_customers);
+
             int start = 0;
             int length = 0;
             for(var i = 0; i < orders.Length; i++)
@@ -145,30 +146,24 @@ namespace ListVsDictionary
 
             foreach (var order in orders)
             {
-                var items = new List<OrderItem>();
                 foreach (var orderItem in orderItems)
                 {
                     if (orderItem.OrderId == order.OrderId)
                     {
-                        items.Add(orderItem);
-                        break;
+                        order.OrderItems.Add(orderItem);
                     }
                 }
-                order.OrderItems = items;
             }
 
             foreach (var customer in customers)
             {
-                var customerOrders = new List<Order>();
                 foreach (var order in orders)
                 {
                     if (order.CustomerId == customer.CustomerId)
                     {
-                        customerOrders.Add(order);
-                        break;
+                        customer.Orders.Add(order);
                     }
                 }
-                customer.Orders = customerOrders;
             }
 
             return customers.ToArray();
