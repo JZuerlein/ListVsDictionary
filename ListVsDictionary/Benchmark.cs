@@ -39,5 +39,11 @@ namespace ListVsDictionary
         {
             var customers = repo.GetCustomersWithSpan();
         }
+
+        [Benchmark]
+        public void GetWithSortedSpan()
+        {
+            var customers = repo.GetCustomerWithSortedSpan();
+        }
     }
 }

@@ -3,29 +3,9 @@
 using ListVsDictionary;
 using BenchmarkDotNet.Running;
 
-var repo = new TestRepository(3, 3, 3, 27);
+var repo = new TestRepository(50, 5, 5, 100);
 
-var customers = repo.GetCustomerWithSortedSpan();
-
-foreach (var customer in customers)
-{
-    Console.WriteLine("CustomerID = " + customer.CustomerId);
-
-    foreach (var order in customer.Orders)
-    {
-        Console.WriteLine("OrderId = " + order.OrderId);
-        Console.WriteLine("Order.CustomerId = " + order.CustomerId);
-
-        foreach (var orderItem in order.OrderItems)
-        {
-            Console.WriteLine("OrderItemId = " + orderItem.OrderItemId);
-            Console.WriteLine("OrderItem.OrderId = " + orderItem.OrderId);
-        }
-    }
-}
-
-
-//BenchmarkRunner.Run<Benchmark>();
+BenchmarkRunner.Run<Benchmark>();
 
 Console.ReadLine();
 
