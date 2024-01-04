@@ -92,27 +92,32 @@ namespace ListVsDictionary
             orders.Sort();
 
             var customers = CollectionsMarshal.AsSpan<Customer>(_customers);
-            int j = 0;
+            int start = 0;
+            int length = 0;
             for(var i = 0; i < orders.Length; i++)
             {
-                while(j < orderItems.Length && orderItems[j].OrderId == orders[i].OrderId)
+                length = 0;
+                while(start + length < orderItems.Length && orderItems[start + length].OrderId == orders[i].OrderId)
                 {
-                    orders[i].OrderItems.Add(orderItems[j]);
-                    j++;
+                    length++;
                 }
+                orders[i].OrderItems.AddRange(orderItems.Slice(start, length));
+                start += length;
             }
 
             orders.Sort(sortOrdersByCustomerId);
             customers.Sort();
 
-            j = 0;
+            start = 0;
             for (var i = 0; i < customers.Length; i++)
-            { 
-                while(j < orders.Length && orders[j].CustomerId == customers[i].CustomerId)
+            {
+                length = 0;
+                while(start + length < orders.Length && orders[start + length].CustomerId == customers[i].CustomerId)
                 {
-                    customers[i].Orders.Add(orders[j]);
-                    j++;
+                    length++;
                 }
+                customers[i].Orders.AddRange(orders.Slice(start, length));
+                start += length;
             }
 
             return customers.ToArray();
