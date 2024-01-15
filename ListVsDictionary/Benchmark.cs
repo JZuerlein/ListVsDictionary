@@ -18,7 +18,7 @@ namespace ListVsDictionary
         [GlobalSetup]
         public void Setup()
         {
-            repo = new TestRepository(1000, 10, 10, 50);
+            repo = new TestRepository(100, 10, 10, 50);
             i = 0;
         }
 
@@ -41,9 +41,15 @@ namespace ListVsDictionary
         }
 
         [Benchmark]
-        public void GetWithSortedSpan()
+        public void GetWithSortedSpanAndSlice()
         {
-            var customers = repo.GetCustomerWithSortedSpan();
+            var customers = repo.GetCustomerWithSortedSpanAndSlice();
+        }
+
+        [Benchmark]
+        public void GetWithSortedSpanAndAdd()
+        {
+            var customers = repo.GetCustomerWithSortedSpanAndAdd();
         }
     }
 }

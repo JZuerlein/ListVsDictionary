@@ -3,8 +3,6 @@
 using ListVsDictionary;
 using BenchmarkDotNet.Running;
 
-var repo = new TestRepository(3, 5, 5, 100);
-
 BenchmarkRunner.Run<Benchmark>();
 
 Console.ReadLine();

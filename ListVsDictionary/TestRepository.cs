@@ -74,10 +74,21 @@ namespace ListVsDictionary
                 customer.Orders = _orders.Where(_ => _.CustomerId ==  customer.CustomerId).ToList();
             }
 
+            //foreach (var customer in _customers)
+            //{
+            //    var ordersForCustomer = new List<Order>();
+            //    foreach(var order in _orders)
+            //    {
+            //        if (order.CustomerId == customer.CustomerId)
+            //            ordersForCustomer.Add(order);
+            //    }
+            //    customer.Orders = ordersForCustomer;
+            //}
+
             return _customers;
         }
 
-        public IEnumerable<Customer> GetCustomerWithSortedSpan()
+        public IEnumerable<Customer> GetCustomerWithSortedSpanAndSlice()
         {
             var products = CollectionsMarshal.AsSpan<Product>(_products);
             products.Sort();
@@ -106,6 +117,7 @@ namespace ListVsDictionary
                 start += length;
             }
 
+
             orders.Sort(sortOrdersByCustomerId);
             customers.Sort();
 
@@ -120,6 +132,49 @@ namespace ListVsDictionary
                 customers[i].Orders.AddRange(orders.Slice(start, length));
                 start += length;
             }
+
+            return customers.ToArray();
+        }
+
+        public IEnumerable<Customer> GetCustomerWithSortedSpanAndAdd()
+        {
+            var products = CollectionsMarshal.AsSpan<Product>(_products);
+            products.Sort();
+
+            var sortOrderItemsByOrderId = new SortOrderItemsByOrderId();
+            var sortOrdersByCustomerId = new SortOrdersByCustomerId();
+
+            var orderItems = CollectionsMarshal.AsSpan<OrderItem>(_orderItems);
+            orderItems.Sort(sortOrderItemsByOrderId);
+
+            var orders = CollectionsMarshal.AsSpan<Order>(_orders);
+            orders.Sort();
+
+            var customers = CollectionsMarshal.AsSpan<Customer>(_customers);
+
+            int position = 0;
+            for (var i = 0; i < orders.Length; i++)
+            {
+                while (position < orderItems.Length && orderItems[position].OrderId == orders[i].OrderId)
+                {
+                    orders[i].OrderItems.Add(orderItems[position]);
+                    position++;
+                }
+            }
+
+            orders.Sort(sortOrdersByCustomerId);
+            customers.Sort();
+
+            position = 0;
+            for (var i = 0; i < customers.Length; i++)
+            {
+                while (position < orders.Length && orders[position].CustomerId == customers[i].CustomerId)
+                {
+                    customers[i].Orders.Add(orders[position]);
+                    position++;
+                }
+            }
+
 
             return customers.ToArray();
         }
